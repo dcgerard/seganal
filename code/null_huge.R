@@ -198,4 +198,5 @@ future::plan(future::sequential)
 attr(ret, "rng") <- NULL
 attr(ret, "doRNG_version") <- NULL
 
-saveRDS(object = ret, file = "../output/null_pvals.RDS")
+saveRDS(object = ret, file = "./output/null_pvals.RDS")
+write.csv(x = df, file = "./output/null_df.csv")
