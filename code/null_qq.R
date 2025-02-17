@@ -61,6 +61,16 @@ longdf |>
   facet_grid(gamma_1 ~ gamma_2)
 
 longdf |>
+  filter(ploidy == 6, model == "seg", p1 == 3, p2 == 3) |>
+  mutate(pi = as.factor(round(pi, digits = 4)),
+         gamma_1 = as.factor(round(gamma_1, digits = 4)),
+         gamma_2 = as.factor(round(gamma_2, digits = 4))) |>
+  ggplot(aes(sample = pvalue, group = index, color = pi)) +
+  geom_qq(distribution = qunif, geom = "line") +
+  geom_abline(slope = 1, intercept = 0, colour = 1, linetype = 2) +
+  facet_grid(gamma_1 ~ gamma_2)
+
+longdf |>
   filter(ploidy == 6, model == "auto_dr", p1 == 2, p2 == 2) |>
   mutate(pi = as.factor(round(pi, digits = 4)),
          alpha_1 = as.factor(round(alpha_1, digits = 4)),

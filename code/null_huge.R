@@ -187,7 +187,7 @@ ret <- foreach(
         p2 = p2,
         model = model,
         outlier = TRUE,
-        ntry = 1)$p_value
+        ntry = 3)$p_value
     })
 
     pvec
