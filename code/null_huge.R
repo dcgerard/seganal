@@ -7,7 +7,7 @@ library(doRNG)
 library(doParallel)
 
 n <- 10000 ## sample size
-nsamp <- 1000 ## number of replicates
+nsamp <- 500 ## number of replicates
 df_4 <- expand_grid(
   ploidy = 4,
   p1 = 0:4,
@@ -104,12 +104,12 @@ df_6 |>
 
 df <- bind_rows(df_4, df_6)
 
-
-registerDoParallel(cores = 12)
-future::plan(future::multisession, workers = 12)
+cl <- makePSOCKcluster(12)
+registerDoParallel(cl)
 
 ret <- foreach(
-  i = 1:nrow(df)
+  i = 1:nrow(df),
+  .export = c("gf_freq", "seg_lrt")
   ) %dorng% {
     ploidy <- df$ploidy[[i]]
     p1 <- df$p1[[i]]
@@ -177,7 +177,6 @@ ret <- foreach(
       pi = pi
     )
 
-
     pvec <- replicate(n = nsamp, expr = {
       x <- c(stats::rmultinom(n = 1, size = n, prob = q))
       seg_lrt(
@@ -187,13 +186,14 @@ ret <- foreach(
         p1 = p1,
         p2 = p2,
         model = model,
-        outlier = TRUE)$p_value
+        outlier = TRUE,
+        ntry = 1)$p_value
     })
 
     pvec
   }
 
-future::plan(future::sequential)
+stopCluster(cl)
 
 attr(ret, "rng") <- NULL
 attr(ret, "doRNG_version") <- NULL

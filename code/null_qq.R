@@ -51,7 +51,7 @@ longdf |>
   facet_grid(beta_1 ~ beta_2)
 
 longdf |>
-  filter(ploidy == 6, model == "seg", p1 == 2, p2 == 2) |>
+  filter(ploidy == 4, model == "seg", p1 == 2, p2 == 2) |>
   mutate(pi = as.factor(round(pi, digits = 4)),
          gamma_1 = as.factor(round(gamma_1, digits = 4)),
          gamma_2 = as.factor(round(gamma_2, digits = 4))) |>
