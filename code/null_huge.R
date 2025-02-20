@@ -6,7 +6,7 @@ library(foreach)
 library(doRNG)
 library(doParallel)
 
-n <- 10000 ## sample size
+n <- 20 ## sample size
 nsamp <- 500 ## number of replicates
 df_4 <- expand_grid(
   ploidy = 4,
@@ -187,7 +187,8 @@ ret <- foreach(
         p2 = p2,
         model = model,
         outlier = TRUE,
-        ntry = 3)$p_value
+        ntry = 3,
+        chisq = TRUE)$p_value
     })
 
     pvec
