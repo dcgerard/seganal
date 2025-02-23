@@ -41,7 +41,13 @@ for (rd_now in unique(pdf$rd)) {
         geom_qq(distribution = qunif, geom = "line") +
         theme_bw() +
         geom_abline(slope = 1, intercept = 0, color = "red") +
-        theme(strip.background = element_rect(fill = "white"))
+        theme(strip.background = element_rect(fill = "white")) ->
+        pl_1
+      ggsave(
+        filename = paste0("./output/nood_nullsims/nood_qq_segtest_n", n_now, "_rd", rd_now, "_ploidy", ploidy_now, ".pdf"),
+        plot = pl_1,
+        height = 7,
+        width = 6)
       pdf |>
         filter(
           n == n_now,
@@ -54,7 +60,13 @@ for (rd_now in unique(pdf$rd)) {
         geom_qq(distribution = qunif, geom = "line") +
         theme_bw() +
         geom_abline(slope = 1, intercept = 0, color = "red") +
-        theme(strip.background = element_rect(fill = "white"))
+        theme(strip.background = element_rect(fill = "white")) ->
+        pl_2
+      ggsave(
+        filename = paste0("./output/nood_nullsims/nood_qq_polymapr_n", n_now, "_rd", rd_now, "_ploidy", ploidy_now, ".pdf"),
+        plot = pl_2,
+        height = 7,
+        width = 6)
     }
   }
 }
