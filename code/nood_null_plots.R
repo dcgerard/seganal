@@ -90,7 +90,7 @@ pdf |>
 # (against the uniform distribution) of the p-values from segtest (blue)
 # and polympaR (red). Plots are faceted by read-depth (columns) and
 # the value of $\gamma_1$ (rows). This scenario had a ploidy of $K = 6$, with
-# $\ell_1 = 2$ and $\ell_2 = 6$ and $n = 200$. Since the null is true,
+# $\ell_1 = 0$ and $\ell_2 = 4$ and $n = 200$. Since the null is true,
 # tests that control Type I error should lie at or above the y=x line (black).
 # PolymapR's null assumption is only satisfied when $\gamma_1 = (1, 0)$
 # (bottom row) and it can control type I error when genotypes are completely
@@ -102,14 +102,14 @@ pdf |>
 # procedure of accounting for genotype uncertainty. The new segtest method
 # controls Type I error in all scenarios.
 pdf |>
-  filter(ploidy == 6, p1 == 2, p2 == 6, n == 200) |>
+  filter(ploidy == 6, p1 == 0, p2 == 4, n == 200) |>
   filter(
-    (map_lgl(gamma1, \(x) all(x == c(0.5, 0.5)))) |
-      (map_lgl(gamma1, \(x) all(x == c(1, 0))))
+    (map_lgl(gamma2, \(x) all(x == c(0.5, 0.5)))) |
+      (map_lgl(gamma2, \(x) all(x == c(1, 0))))
   ) |>
-  mutate(gam = if_else(map_lgl(gamma1, \(x) all(x == c(0.5, 0.5))), "(0.5, 0.5)", "(1, 0)")) |>
+  mutate(gam = if_else(map_lgl(gamma2, \(x) all(x == c(0.5, 0.5))), "(0.5, 0.5)", "(1, 0)")) |>
   ggplot(aes(sample = p, color = method)) +
-  geom_qq(distribution = qunif, geom = "line") +
+  geom_qq(distribution = qunif) +
   geom_abline(slope = 1, intercept = 0, color = "black") +
   facet_grid(gam ~ rd) +
   theme_bw() +
