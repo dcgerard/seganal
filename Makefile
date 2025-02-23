@@ -21,13 +21,21 @@ null_sims: ./output/nullsims/null_pvalues.RDS
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
 
+## No outliers null simulations ----
 .PHONY: nood_null_sims
-nood_null_sims: ./output/nood_nullsims/nood_null_pvalues.RDS
+nood_null_sims: ./output/nood_nullsims/nood_qq_example.pdf
+
+./output/nood_nullsims/nood_qq_example.pdf: ./code/nood_null_plots.R ./output/nood_nullsims/nood_null_pvalues.RDS
+	mkdir -p $(rout)
+	mkdir -p $(@D)
+	$(rexec) $< $(rout)/$(basename $(<F)).Rout
 
 ./output/nood_nullsims/nood_null_pvalues.RDS: ./code/nood_null_sims.R
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
+
+## No outlier alternative simulations ----
 
 .PHONY: nood_alt_sims
 nood_alt_sims: ./output/nood_altsims/nood_alt_pvalues.RDS

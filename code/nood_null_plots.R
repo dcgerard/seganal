@@ -2,18 +2,18 @@ library(tidyverse)
 df <- readRDS("./output/nood_nullsims/nood_null_paramdf.RDS")
 pval <- readRDS("./output/nood_nullsims/nood_null_pvalues.RDS")
 
-i <- sample(1:nrow(df), size = 1)
-pval[[i]] |>
-  as_tibble() |>
-  pivot_longer(cols = everything(), names_to = "method", values_to = "p") |>
-  ggplot(aes(sample = p, color = method)) +
-  geom_qq(distribution = qunif) +
-  geom_abline(slope = 1, intercept = 0, lty = 2) +
-  xlim(0, 1) +
-  ylim(0, 1) +
-  theme_bw() +
-  ggtitle(label = i)
-paste(paste(names(df), "=",  df[i, ]), collapse = ", ")
+# i <- sample(1:nrow(df), size = 1)
+# pval[[i]] |>
+#   as_tibble() |>
+#   pivot_longer(cols = everything(), names_to = "method", values_to = "p") |>
+#   ggplot(aes(sample = p, color = method)) +
+#   geom_qq(distribution = qunif) +
+#   geom_abline(slope = 1, intercept = 0, lty = 2) +
+#   xlim(0, 1) +
+#   ylim(0, 1) +
+#   theme_bw() +
+#   ggtitle(label = i)
+# paste(paste(names(df), "=",  df[i, ]), collapse = ", ")
 
 for (i in seq_along(pval)) {
   pval[[i]] <- as_tibble(pval[[i]]) |>
@@ -26,6 +26,7 @@ pdf |>
   pivot_longer(cols = c("segtest", "polymapR"), names_to = "method", values_to = "p") ->
   pdf
 
+## All plots, for supplementary materials
 for (rd_now in unique(pdf$rd)) {
   for (n_now in unique(pdf$n)) {
     for (ploidy_now in unique(pdf$ploidy)) {
@@ -70,3 +71,48 @@ for (rd_now in unique(pdf$rd)) {
     }
   }
 }
+
+## Example plots for main manuscript
+pdf |>
+  filter(ploidy == 6, p1 == 2, p2 == 4, n == 200) |>
+  filter(
+    (map_lgl(gamma1, \(x) all(x == c(0.5, 0.5))) & map_lgl(gamma2, \(x) all(x == c(0.5, 0.5)))) |
+      (map_lgl(gamma1, \(x) all(x == c(1, 0))) & map_lgl(gamma2, \(x) all(x == c(1, 0))))
+  ) |>
+  mutate(gam = if_else(map_lgl(gamma1, \(x) all(x == c(0.5, 0.5))), "(0.5, 0.5)", "(1, 0)")) |>
+  ggplot(aes(sample = p, color = method)) +
+  geom_qq(distribution = qunif, geom = "line") +
+  geom_abline(slope = 1, intercept = 0, color = "black") +
+  facet_grid(rd ~ gam)
+
+
+## Example results from the null simulations. QQ plots
+# (against the uniform distribution) of the p-values from segtest (blue)
+# and polympaR (red). Plots are faceted by read-depth (columns) and
+# the value of $\gamma_1$ (rows). This scenario had a ploidy of $K = 6$, with
+# $\ell_1 = 2$ and $\ell_2 = 6$ and $n = 200$. Since the null is true,
+# tests that control Type I error should lie at or above the y=x line (black).
+# PolymapR's null assumption is only satisfied when $\gamma_1 = (1, 0)$
+# (bottom row) and it can control type I error when genotypes are completely
+# known (rd = Inf). However, polymapR cannot control type I error when
+# there is not absolute preferential pairing (top row) because that scenario
+# is not covered by the polymapR test. polymapR also does not control Type I
+# error when genotypes are not known left column, even when their null
+# scenario is satisfied ($\gamma_1 = (1,0))$. This is due to their ad hoc
+# procedure of accounting for genotype uncertainty. The new segtest method
+# controls Type I error in all scenarios.
+pdf |>
+  filter(ploidy == 6, p1 == 2, p2 == 6, n == 200) |>
+  filter(
+    (map_lgl(gamma1, \(x) all(x == c(0.5, 0.5)))) |
+      (map_lgl(gamma1, \(x) all(x == c(1, 0))))
+  ) |>
+  mutate(gam = if_else(map_lgl(gamma1, \(x) all(x == c(0.5, 0.5))), "(0.5, 0.5)", "(1, 0)")) |>
+  ggplot(aes(sample = p, color = method)) +
+  geom_qq(distribution = qunif, geom = "line") +
+  geom_abline(slope = 1, intercept = 0, color = "black") +
+  facet_grid(gam ~ rd) +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "white")) ->
+  pl
+ggsave(filename = "./output/nood_nullsims/nood_qq_example.pdf", plot = pl, height = 4, width = 6)
