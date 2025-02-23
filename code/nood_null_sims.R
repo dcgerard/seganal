@@ -65,40 +65,38 @@ df_6 |>
     xor(p2 %in% c(1, 5), is.na(beta2)),
     ) ->
   df_6
-df_8_1 <- expand_grid(
+df_8 <- expand_grid(
   ploidy = 8,
-  p1 = c(0:3,5:8),
-  p2 = c(0:3,5:8),
+  p1 = 0:8,
+  p2 = 0:8,
   n = c(20, 200),
   rd = c(10, Inf),
   pi = 0,
   gamma1 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   gamma2 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
+  gamma1_4 = list(NA, c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(1, 1, 0)/2, c(1, 0, 1)/2, c(0, 1, 1)/2, c(1, 1, 1)/3),
+  gamma2_4 = list(NA, c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(1, 1, 0)/2, c(1, 0, 1)/2, c(0, 1, 1)/2, c(1, 1, 1)/3),
   beta1 = c(NA, 0, beta_bounds(8)/2, beta_bounds(8)),
   beta2 = c(NA, 0, beta_bounds(8)/2, beta_bounds(8))
 )
-df_8_1 |>
+df_8 |>
   filter(
     p2 >= p1,
     xor(p1 %in% c(2,3,5,6), is.na(gamma1)),
     xor(p2 %in% c(2,3,5,6), is.na(gamma2)),
+    xor(p1 == 4, is.na(gamma1_4)),
+    xor(p2 == 4, is.na(gamma2_4)),
     xor(p1 %in% c(1, 7), is.na(beta1)),
     xor(p2 %in% c(1, 7), is.na(beta2)),
-    ) ->
-  df_8_1
-df_8_2 <- expand_grid(
-  ploidy = 8,
-  p1 = 4,
-  p2 = 4,
-  n = c(20, 200),
-  rd = c(10, Inf),
-  pi = 0,
-  gamma1 = list(c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(1, 1, 0)/2, c(1, 0, 1)/2, c(0, 1, 1)/2, c(1, 1, 1)/3),
-  gamma2 = list(c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(1, 1, 0)/2, c(1, 0, 1)/2, c(0, 1, 1)/2, c(1, 1, 1)/3),
-  beta1 = NA,
-  beta2 = NA)
+    ) |>
+  mutate(
+    gamma1 = if_else(!is.na(gamma1_4), gamma1_4, gamma1),
+    gamma2 = if_else(!is.na(gamma2_4), gamma2_4, gamma2),
+  ) |>
+  select(-gamma1_4, -gamma2_4) ->
+  df_8
 
-df <- bind_rows(df_4, df_6, df_8_1, df_8_2)
+df <- bind_rows(df_4, df_6, df_8)
 
 df |>
   mutate(
@@ -107,6 +105,12 @@ df |>
   df
 
 df$seed <- 1:nrow(df)
+
+## Reorder rows for more even parallelization
+set.seed(1)
+df |>
+  slice_sample(n = nrow(df), replace = FALSE) ->
+  df
 
 ret <- foreach(
   i = 1:nrow(df),
