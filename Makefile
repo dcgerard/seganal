@@ -3,7 +3,7 @@ rexec = R CMD BATCH --no-save --no-restore
 rout = ./output/rout
 
 .PHONY: all
-all: null_sims
+all: null_sims nood_null_sims nood_alt_sims
 
 .PHONY: huge_null
 huge_null: ./output/null_pvals.RDS
@@ -17,6 +17,22 @@ huge_null: ./output/null_pvals.RDS
 null_sims: ./output/nullsims/null_pvalues.RDS
 
 ./output/nullsims/null_pvalues.RDS: ./code/null_sims.R
+	mkdir -p $(rout)
+	mkdir -p $(@D)
+	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
+
+.PHONY: nood_null_sims
+nood_null_sims: ./output/nood_nullsims/nood_null_pvalues.RDS
+
+./output/nood_nullsims/nood_null_pvalues.RDS: ./code/nood_null_sims.R
+	mkdir -p $(rout)
+	mkdir -p $(@D)
+	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
+
+.PHONY: nood_alt_sims
+nood_alt_sims: ./output/nood_altsims/nood_alt_pvalues.RDS
+
+./output/nood_altsims/nood_alt_pvalues.RDS: ./code/nood_alt_sims.R
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout

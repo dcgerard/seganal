@@ -28,7 +28,7 @@ df_4 <- expand_grid(
   p2 = 0:4,
   n = c(20, 200),
   rd = c(10, Inf),
-  pi = c(0, 0.015, 0.03),
+  pi = 0,
   gamma1 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   gamma2 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   beta1 = c(NA, 0, beta_bounds(4)/2, beta_bounds(4)),
@@ -50,7 +50,7 @@ df_6 <- expand_grid(
   p2 = 0:6,
   n = c(20, 200),
   rd = c(10, Inf),
-  pi = c(0, 0.015, 0.03),
+  pi = 0,
   gamma1 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   gamma2 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   beta1 = c(NA, 0, beta_bounds(6)/2, beta_bounds(6)),
@@ -71,7 +71,7 @@ df_8_1 <- expand_grid(
   p2 = c(0:3,5:8),
   n = c(20, 200),
   rd = c(10, Inf),
-  pi = c(0, 0.015, 0.03),
+  pi = 0,
   gamma1 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   gamma2 = list(NA, c(1, 0), c(0.5, 0.5), c(0, 1)),
   beta1 = c(NA, 0, beta_bounds(8)/2, beta_bounds(8)),
@@ -92,7 +92,7 @@ df_8_2 <- expand_grid(
   p2 = 4,
   n = c(20, 200),
   rd = c(10, Inf),
-  pi = c(0, 0.015, 0.03),
+  pi = 0,
   gamma1 = list(c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(1, 1, 0)/2, c(1, 0, 1)/2, c(0, 1, 1)/2, c(1, 1, 1)/3),
   gamma2 = list(c(1, 0, 0), c(0, 1, 0), c(0, 0, 1), c(1, 1, 0)/2, c(1, 0, 1)/2, c(0, 1, 1)/2, c(1, 1, 1)/3),
   beta1 = NA,
@@ -158,7 +158,7 @@ ret <- foreach(
         p1 = p1,
         p2 = p2,
         model = "seg",
-        outlier = TRUE)
+        outlier = FALSE)
       pout <- polymapr_test(
         x = pl,
         g1 = p1,
@@ -175,5 +175,5 @@ if (nc > 1) {
   plan(sequential)
 }
 
-saveRDS(object = df, file = "./output/nullsims/null_paramdf.RDS")
-saveRDS(object = ret, file = "./output/nullsims/null_pvalues.RDS")
+saveRDS(object = df, file = "./output/nood_nullsims/nood_null_paramdf.RDS")
+saveRDS(object = ret, file = "./output/nood_nullsims/nood_null_pvalues.RDS")
