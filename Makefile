@@ -3,8 +3,11 @@ rexec = R CMD BATCH --no-save --no-restore
 rout = ./output/rout
 
 .PHONY: all
-all: null_sims nood_null_sims nood_alt_sims
+all: null_sims nood_null_sims alt_sims
 
+## Null simulations under fewer scenarios but massive sample size
+## Just to verify the asymptotics are correct.
+## Not part of main manuscript
 .PHONY: huge_null
 huge_null: ./output/null_pvals.RDS
 
@@ -13,15 +16,21 @@ huge_null: ./output/null_pvals.RDS
 	mkdir -p $(@D)
 	$(rexec) $< $(rout)/$(basename $(<F)).Rout
 
+## Null simulations with outliers ----
 .PHONY: null_sims
-null_sims: ./output/nullsims/null_pvalues.RDS
+null_sims: ./output/nullsims/qq_example.pdf
+
+./output/nullsims/qq_example.pdf: ./code/null_plots.R ./output/nullsims/null_pvalues.RDS
+	mkdir -p $(rout)
+	mkdir -p $(@D)
+	$(rexec) $< $(rout)/$(basename $(<F)).Rout
 
 ./output/nullsims/null_pvalues.RDS: ./code/null_sims.R
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
 
-## No outliers null simulations ----
+## Null simulations, no outliers ----
 .PHONY: nood_null_sims
 nood_null_sims: ./output/nood_nullsims/nood_qq_example.pdf
 
@@ -35,12 +44,11 @@ nood_null_sims: ./output/nood_nullsims/nood_qq_example.pdf
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
 
-## No outlier alternative simulations ----
+## Alternative simulations ----
+.PHONY: alt_sims
+alt_sims: ./output/altsims/alt_pvalues.RDS
 
-.PHONY: nood_alt_sims
-nood_alt_sims: ./output/nood_altsims/nood_alt_pvalues.RDS
-
-./output/nood_altsims/nood_alt_pvalues.RDS: ./code/nood_alt_sims.R
+./output/altsims/alt_pvalues.RDS: ./code/alt_sims.R
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
