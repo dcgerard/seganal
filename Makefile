@@ -3,7 +3,7 @@ rexec = R CMD BATCH --no-save --no-restore
 rout = ./output/rout
 
 .PHONY: all
-all: null_sims nood_null_sims alt_sims
+all: null_sims nood_null_sims alt_sims dr_null_sims
 
 ## Null simulations under fewer scenarios but massive sample size
 ## Just to verify the asymptotics are correct.
@@ -40,6 +40,15 @@ nood_null_sims: ./output/nood_nullsims/nood_qq_example.pdf
 	$(rexec) $< $(rout)/$(basename $(<F)).Rout
 
 ./output/nood_nullsims/nood_null_pvalues.RDS: ./code/nood_null_sims.R
+	mkdir -p $(rout)
+	mkdir -p $(@D)
+	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout
+
+## Double Reduction Null Simulations ----
+.PHONY: dr_null_sims
+dr_null_sims: ./output/dr_nullsims/dr_null_pvalues.RDS
+
+./output/dr_nullsims/dr_null_pvalues.RDS: ./code/dr_null_sims.R
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) '--args nc=$(nc)' $< $(rout)/$(basename $(<F)).Rout

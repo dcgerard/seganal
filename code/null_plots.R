@@ -26,7 +26,7 @@ pdf |>
   pivot_longer(cols = c("segtest", "polymapR"), names_to = "method", values_to = "p") ->
   pdf
 
-## All plots, for supplementary materials
+## All plots, for supplementary materials ----
 for (rd_now in unique(pdf$rd)) {
   for (n_now in unique(pdf$n)) {
     for (ploidy_now in unique(pdf$ploidy)) {
@@ -72,8 +72,8 @@ for (rd_now in unique(pdf$rd)) {
   }
 }
 
-
-## Example results from the null simulations. QQ plots
+## Example plot ----
+# Example results from the null simulations. QQ plots
 # (against the uniform distribution) of the p-values from segtest (blue)
 # and polympaR (red). Plots are faceted by read-depth (columns) and
 # the value of $\gamma_1$ (rows). This scenario had a ploidy of $K = 6$, with
@@ -103,3 +103,29 @@ pdf |>
   theme(strip.background = element_rect(fill = "white")) ->
   pl
 ggsave(filename = "./output/nullsims/qq_example.pdf", plot = pl, height = 4, width = 6)
+
+
+## Look at just type I error ----
+alpha <- 0.05
+pdf |>
+  group_by(i, method) |>
+  summarize(
+    t1e = mean(p < alpha),
+    nreject = sum(p < alpha)) |>
+  ungroup() ->
+  sumdf
+
+sumdf |>
+  ggplot(aes(x = t1e)) +
+  geom_histogram(fill = "white", color = "black", bins = 30) +
+  facet_grid(.~ method, scales = "free") +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "white"))
+
+sumdf |>
+  filter(method == "segtest") |>
+  ggplot(aes(sample = nreject)) +
+  geom_qq(distribution = qbinom, dparams = list(prob = alpha, size = 200)) +
+  geom_abline(slope = 1, intercept = 0) +
+  theme_bw() +
+  theme(strip.background = element_rect(fill = "white"))
