@@ -2,6 +2,12 @@ nc = 12
 rexec = R CMD BATCH --no-save --no-restore
 rout = ./output/rout
 
+nullplots = ./output/nullsims/null_t1e.pdf \
+            ./output/nullsims/qq_example.pdf
+
+nood_nullplots = ./output/nood_nullsims/nood_null_t1e.pdf \
+                 ./output/nood_nullsims/nood_qq_example.pdf
+
 .PHONY: all
 all: null_sims nood_null_sims alt_sims dr_null_sims
 
@@ -18,9 +24,9 @@ huge_null: ./output/null_pvals.RDS
 
 ## Null simulations with outliers ----
 .PHONY: null_sims
-null_sims: ./output/nullsims/qq_example.pdf
+null_sims: $(nullplots)
 
-./output/nullsims/qq_example.pdf: ./code/null_plots.R ./output/nullsims/null_pvalues.RDS
+$(nullplots): ./code/null_plots.R ./output/nullsims/null_pvalues.RDS
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) $< $(rout)/$(basename $(<F)).Rout
@@ -32,9 +38,9 @@ null_sims: ./output/nullsims/qq_example.pdf
 
 ## Null simulations, no outliers ----
 .PHONY: nood_null_sims
-nood_null_sims: ./output/nood_nullsims/nood_qq_example.pdf
+nood_null_sims: $(nood_nullplots)
 
-./output/nood_nullsims/nood_qq_example.pdf: ./code/nood_null_plots.R ./output/nood_nullsims/nood_null_pvalues.RDS
+$(nood_nullplots): ./code/nood_null_plots.R ./output/nood_nullsims/nood_null_pvalues.RDS
 	mkdir -p $(rout)
 	mkdir -p $(@D)
 	$(rexec) $< $(rout)/$(basename $(<F)).Rout

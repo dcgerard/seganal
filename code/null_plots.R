@@ -37,8 +37,9 @@ for (rd_now in unique(pdf$rd)) {
           ploidy == ploidy_now,
           method == "segtest") |>
         mutate(i = as.factor(i)) |>
+        mutate(pgeno = paste0("(", p1, ",", p2, ")")) |>
         ggplot(aes(sample = p, group = i)) +
-        facet_wrap(~ p1 + p2) +
+        facet_wrap(~ pgeno) +
         geom_qq(distribution = qunif, geom = "line") +
         theme_bw() +
         geom_abline(slope = 1, intercept = 0, color = "red") +
@@ -55,9 +56,10 @@ for (rd_now in unique(pdf$rd)) {
           rd == rd_now,
           ploidy == ploidy_now,
           method == "polymapR") |>
-        mutate(i = as.factor(i)) |>
+        mutate(i = as.factor(i))  |>
+        mutate(pgeno = paste0("(", p1, ",", p2, ")")) |>
         ggplot(aes(sample = p, group = i)) +
-        facet_wrap(~p1 + p2) +
+        facet_wrap(~ pgeno) +
         geom_qq(distribution = qunif, geom = "line") +
         theme_bw() +
         geom_abline(slope = 1, intercept = 0, color = "red") +
@@ -108,24 +110,30 @@ ggsave(filename = "./output/nullsims/qq_example.pdf", plot = pl, height = 4, wid
 ## Look at just type I error ----
 alpha <- 0.05
 pdf |>
-  group_by(i, method) |>
+  group_by(i, method, n) |>
   summarize(
     t1e = mean(p < alpha),
     nreject = sum(p < alpha)) |>
   ungroup() ->
   sumdf
 
-sumdf |>
-  ggplot(aes(x = t1e)) +
-  geom_histogram(fill = "white", color = "black", bins = 30) +
-  facet_grid(.~ method, scales = "free") +
-  theme_bw() +
-  theme(strip.background = element_rect(fill = "white"))
+# sumdf |>
+#   filter(method == "segtest") |>
+#   arrange(desc(t1e)) |>
+#   view()
+
+nsamp <- nrow(pval[[1]])
+upper <- qbinom(p = 0.995, size = nsamp, prob = alpha) / nsamp
 
 sumdf |>
-  filter(method == "segtest") |>
-  ggplot(aes(sample = nreject)) +
-  geom_qq(distribution = qbinom, dparams = list(prob = alpha, size = 200)) +
-  geom_abline(slope = 1, intercept = 0) +
+  mutate(n = as.factor(n)) |>
+  ggplot(aes(x = t1e)) +
+  geom_histogram(fill = "black", color = "black", bins = 100) +
+  facet_grid(n ~ method, scales = "free") +
   theme_bw() +
-  theme(strip.background = element_rect(fill = "white"))
+  theme(strip.background = element_rect(fill = "white")) +
+  geom_vline(xintercept = alpha, colour = "red", lty = 2) +
+  geom_vline(xintercept = upper, colour = "blue", lty = 3) ->
+  pl
+
+ggsave(filename = "./output/nullsims/null_t1e.pdf", plot = pl, height = 4, width = 4)
