@@ -88,11 +88,12 @@ pdf |>
   facet_grid(rd ~ gam)
 
 
-## Example results from the null simulations. QQ plots
+## Example plot ----
+# Example results from the null simulations. QQ plots
 # (against the uniform distribution) of the p-values from segtest (blue)
 # and polympaR (red). Plots are faceted by read-depth (columns) and
-# the value of $\gamma_1$ (rows). This scenario had a ploidy of $K = 6$, with
-# $\ell_1 = 0$ and $\ell_2 = 4$ and $n = 200$. Since the null is true,
+# the value of $\gamma_1$ (rows). This scenario had a ploidy of $K = 8$, with
+# $\ell_1 = 0$ and $\ell_2 = 6$ and $n = 200$. Since the null is true,
 # tests that control Type I error should lie at or above the y=x line (black).
 # PolymapR's null assumption is only satisfied when $\gamma_1 = (1, 0)$
 # (bottom row) and it can control type I error when genotypes are completely
@@ -104,7 +105,7 @@ pdf |>
 # procedure of accounting for genotype uncertainty. The new segtest method
 # controls Type I error in all scenarios.
 pdf |>
-  filter(ploidy == 6, p1 == 0, p2 == 4, n == 200) |>
+  filter(ploidy == 8, p1 == 0, p2 == 6, n == 200) |>
   filter(
     (map_lgl(gamma2, \(x) all(x == c(0.5, 0.5)))) |
       (map_lgl(gamma2, \(x) all(x == c(1, 0))))
@@ -122,7 +123,7 @@ ggsave(filename = "./output/nood_nullsims/nood_qq_example.pdf", plot = pl, heigh
 ## Look at just type I error ----
 alpha <- 0.05
 pdf |>
-  group_by(i, method, n) |>
+  group_by(i, method, n, rd) |>
   summarize(
     t1e = mean(p < alpha),
     nreject = sum(p < alpha)) |>
@@ -141,12 +142,12 @@ sumdf |>
   mutate(n = as.factor(n)) |>
   ggplot(aes(x = t1e)) +
   geom_histogram(fill = "black", color = "black", bins = 100) +
-  facet_grid(n ~ method, scales = "free") +
+  facet_grid(n + rd ~ method, scales = "free") +
   theme_bw() +
   theme(strip.background = element_rect(fill = "white")) +
   geom_vline(xintercept = alpha, colour = "red", lty = 2) +
   geom_vline(xintercept = upper, colour = "blue", lty = 3) ->
   pl
 
-ggsave(filename = "./output/nood_nullsims/nood_null_t1e.pdf", plot = pl, height = 4, width = 4)
+ggsave(filename = "./output/nood_nullsims/nood_null_t1e.pdf", plot = pl, height = 6, width = 4)
 
