@@ -99,22 +99,22 @@ ret <- foreach(
         x = x,
         p1_ploidy = ploidy,
         p2_ploidy = ploidy,
-        p1 = NULL,
-        p2 = NULL,
+        p1 = p1,
+        p2 = p2,
         model = "seg",
         outlier = FALSE)
       sout <- seg_lrt(
         x = x,
         p1_ploidy = ploidy,
         p2_ploidy = ploidy,
-        p1 = NULL,
-        p2 = NULL,
+        p1 = p1,
+        p2 = p2,
         model = "seg",
         outlier = TRUE)
       pout <- polymapr_test(
         x = pl,
-        g1 = NULL,
-        g2 = NULL,
+        g1 = p1,
+        g2 = p2,
         type = "segtest")
       c(segtest = sout$p_value, segtest_nout = sout_nout$p_value, polymapR = pout$p_value)
     })
