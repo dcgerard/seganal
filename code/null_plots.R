@@ -75,21 +75,7 @@ for (rd_now in unique(pdf$rd)) {
 }
 
 ## Example plot ----
-# Example results from the null simulations. QQ plots
-# (against the uniform distribution) of the p-values from segtest (blue)
-# and polympaR (red). Plots are faceted by read-depth (columns) and
-# the value of $\gamma_1$ (rows). This scenario had a ploidy of $K = 8$, with
-# $\ell_1 = 0$ and $\ell_2 = 6$ and $n = 200$. Since the null is true,
-# tests that control Type I error should lie at or above the y=x line (black).
-# PolymapR's null assumption is only satisfied when $\gamma_1 = (1, 0)$
-# (bottom row) and it can control type I error when genotypes are completely
-# known (rd = Inf). However, polymapR cannot control type I error when
-# there is not absolute preferential pairing (top row) because that scenario
-# is not covered by the polymapR test. polymapR also does not control Type I
-# error when genotypes are not known left column, even when their null
-# scenario is satisfied ($\gamma_1 = (1,0))$. This is due to their ad hoc
-# procedure of accounting for genotype uncertainty. The new segtest method
-# controls Type I error in all scenarios.
+colvec <- palette.colors(n = 4, palette = "Okabe-Ito")[2:3]
 pdf |>
   filter(ploidy == 8, p1 == 0, p2 == 6, n == 200, pi == 0) |>
   filter(
@@ -102,7 +88,8 @@ pdf |>
   geom_abline(slope = 1, intercept = 0, color = "black") +
   facet_grid(gam ~ rd) +
   theme_bw() +
-  theme(strip.background = element_rect(fill = "white")) ->
+  theme(strip.background = element_rect(fill = "white")) +
+  scale_color_manual(values = colvec) ->
   pl
 ggsave(filename = "./output/nullsims/qq_example.pdf", plot = pl, height = 4, width = 6)
 
