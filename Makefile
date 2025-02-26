@@ -14,7 +14,8 @@ nood_nullplots = ./output/nood_nullsims/nood_null_t1e.pdf \
 alt_output = ./output/altsims/alt_tab.txt
 
 ## dr sims output
-dr_output = ./output/dr_nullsims/dr_null_hist.pdf
+dr_output = ./output/dr_nullsims/dr_null_hist.pdf \
+            ./output/dr_nullsims/dr_bad_tab.txt
 
 .PHONY: all
 all: null_sims nood_null_sims alt_sims dr_null_sims

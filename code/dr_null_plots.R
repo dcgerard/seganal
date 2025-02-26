@@ -1,4 +1,5 @@
 library(tidyverse)
+library(xtable)
 df <- readRDS("./output/dr_nullsims/dr_null_paramdf.RDS")
 pval <- readRDS("./output/dr_nullsims/dr_null_pvalues.RDS")
 
@@ -36,6 +37,7 @@ colvec <- palette.colors(n = 7, palette = "Okabe-Ito")[c(2, 3, 4)]
 pdf |>
   group_by(n, ploidy, rd, p1, p2, dr, method) |>
   summarize(t1e = mean(p < alpha)) |>
+  ungroup() |>
   mutate(dr = parse_factor(dr, levels = c("low", "med", "high")),
          method = parse_factor(method, levels = c("polymapR", "segtestNO", "segtest")),
          ploidy = as.factor(ploidy)) ->
@@ -59,7 +61,15 @@ ggsave(filename = "./output/dr_nullsims/dr_null_hist.pdf", plot = pl, height = 5
 sumdf |>
   filter(dr == "med", method == "segtest") |>
   arrange(desc(t1e)) |>
-  filter(t1e > upper)
+  filter(t1e > upper) |>
+  mutate(n = factor(n)) |>
+  select(-dr, -method) |>
+  xtable(
+    label = "tab:bad.dr.sims",
+    caption = "Eight simulation scenarios for \\texttt{segtest} with poor type I error control under moderate double reduction (Section \\ref{sec:dr.sims}). All scenarios involve duplex-by-nullplex crosses, known genotypes, and large sample sizes."
+    ) |>
+  print(include.rownames = FALSE) |>
+  cat(file = "./output/dr_nullsims/dr_bad_tab.txt")
 
 sumdf |>
   filter(dr == "high", method == "segtest") |>
