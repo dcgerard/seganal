@@ -13,6 +13,9 @@ nood_nullplots = ./output/nood_nullsims/nood_null_t1e.pdf \
 ## alt sims output
 alt_output = ./output/altsims/alt_tab.txt
 
+## dr sims output
+dr_output = ./output/dr_nullsims/dr_null_hist.pdf
+
 .PHONY: all
 all: null_sims nood_null_sims alt_sims dr_null_sims
 
@@ -57,7 +60,12 @@ $(nood_nullplots): ./code/nood_null_plots.R ./output/nood_nullsims/nood_null_pva
 
 ## Double Reduction Null Simulations ----
 .PHONY: dr_null_sims
-dr_null_sims: ./output/dr_nullsims/dr_null_pvalues.RDS
+dr_null_sims: $(dr_output)
+
+$(dr_output): ./code/dr_null_plots.R ./output/dr_nullsims/dr_null_pvalues.RDS
+	mkdir -p $(rout)
+	mkdir -p $(@D)
+	$(rexec) $< $(rout)/$(basename $(<F)).Rout
 
 ./output/dr_nullsims/dr_null_pvalues.RDS: ./code/dr_null_sims.R
 	mkdir -p $(rout)
