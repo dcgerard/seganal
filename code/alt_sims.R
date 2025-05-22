@@ -21,7 +21,7 @@ if (nc == 1) {
 }
 
 ## Simulations
-nsamp <- 200
+nsamp <- 1000
 df <- expand_grid(
   n = c(20, 200),
   ploidy = c(4, 6, 8),

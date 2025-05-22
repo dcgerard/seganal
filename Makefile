@@ -11,7 +11,8 @@ nood_nullplots = ./output/nood_nullsims/nood_null_t1e.pdf \
                  ./output/nood_nullsims/nood_qq_example.pdf
 
 ## alt sims output
-alt_output = ./output/altsims/alt_tab.txt
+alt_output = ./output/altsims/alt_tab.txt \
+             ./output/altsims/alt_power.pdf
 
 ## dr sims output
 dr_output = ./output/dr_nullsims/dr_null_hist.pdf \

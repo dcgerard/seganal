@@ -115,12 +115,14 @@ upper <- qbinom(p = 0.995, size = nsamp, prob = alpha) / nsamp
 sumdf |>
   mutate(n = as.factor(n)) |>
   ggplot(aes(x = t1e)) +
-  geom_histogram(fill = "black", color = "black", bins = 100) +
-  facet_grid(n + rd ~ method, scales = "free") +
+  geom_histogram(fill = "white", color = "black", bins = 30) +
+  facet_grid(n + rd ~ method, scales = "free_y") +
   theme_bw() +
   theme(strip.background = element_rect(fill = "white")) +
   geom_vline(xintercept = alpha, colour = "red", lty = 2) +
-  geom_vline(xintercept = upper, colour = "blue", lty = 3) ->
+  geom_vline(xintercept = upper, colour = "blue", lty = 3) +
+  xlab("Type I Error Rate") +
+  scale_x_sqrt() ->
   pl
 
 ggsave(filename = "./output/nullsims/null_t1e.pdf", plot = pl, height = 6, width = 4)
