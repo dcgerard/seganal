@@ -94,7 +94,7 @@ powdf |>
   facet_grid(n ~ ploidy) +
   geom_line() +
   geom_point() +
-  geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.1) +
+  # geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.1) +
   theme_bw() +
   theme(strip.background = element_rect(fill = "white")) +
   xlab("Scenario") +
