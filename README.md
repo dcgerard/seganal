@@ -10,7 +10,7 @@
 This repo contains the analysis scripts needed to reproduce the
 simulations of Gerard et al. (2025).
 
-1.  Restore the `renv`:
+1.  Open up R and restore the `renv`:
 
     ``` r
     renv::restore()
