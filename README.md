@@ -32,6 +32,6 @@ simulations of Gerard et al. (2025).
 
 # References
 
-Gerard D, Ambrosano GB, Pereira GDS, & Garcia AAF (2025). “Tests for
-segregation distortion in higher ploidy F1 populations.” *Unpublished
-Manuscript*.
+Gerard D, Ambrosano GB, da Silva Pereira G, & Garcia AAF (2025). “Tests
+for segregation distortion in higher ploidy F1 populations.”
+*Unpublished Manuscript*.
