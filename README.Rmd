@@ -39,4 +39,4 @@ This repo contains the analysis scripts needed to reproduce the simulations of G
 
 # References
 
-Gerard D, Ambrosano GB, da Silva Pereira G, & Garcia AAF (2025). "Tests for segregation distortion in higher ploidy F1 populations." *Unpublished Manuscript*.
+Gerard D, Ambrosano GB, Pereira GdS, & Garcia AAF (2025). "Tests for segregation distortion in higher ploidy F1 populations." *Unpublished Manuscript*.
