@@ -9,7 +9,9 @@
 <!-- badges: end -->
 
 This repo contains the analysis scripts needed to reproduce the
-simulations of Gerard et al. (2025).
+simulations of Gerard et al. (2025). These analyses were evaluated using
+R version 4.5.0. The exact versions of all packages used are listed in
+the “renv.lock” file.
 
 1.  Edit the `nc` argument in the `Makefile` to be the number of cores
     you wish to use for the analysis.
