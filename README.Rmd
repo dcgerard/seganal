@@ -42,4 +42,4 @@ This repo contains the analysis scripts needed to reproduce the simulations of G
 
 # References
 
-Gerard, D, Ambrosano, GB, Pereira, GdS, & Garcia, AAF (2025). "Tests for segregation distortion in higher ploidy F1 populations." _G3: Genes | Genomes | Genetics_, p. jkaf212. [doi:10.1093/g3journal/jkaf212](https://doi.org/10.1093/g3journal/jkaf212).
+Gerard, D, Ambrosano, GB, Pereira, GdS, & Garcia, AAF (2025). "Tests for segregation distortion in higher ploidy F1 populations." _G3: Genes | Genomes | Genetics_, 15(11), jkaf212. [doi:10.1093/g3journal/jkaf212](https://doi.org/10.1093/g3journal/jkaf212).
